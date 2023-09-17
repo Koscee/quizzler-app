@@ -16,7 +16,7 @@ class QuizInterface:
         self.score_label = Label(text=f"Score: {0}", bg=THEME_COLOR, fg="white", font=('Arial', 15))
         self.score_label.grid(row=0, column=1, sticky="nse")
 
-        self.canvas = Canvas(width=300, height=250)
+        self.canvas = Canvas(width=300, height=250, highlightthickness=0)
         self.question_text = self.canvas.create_text(150, 125, width=280, text="Question Goes Here", fill=THEME_COLOR,
                                                      font=("Arial", 18, "italic"))
         self.canvas.grid(row=1, column=0, columnspan=2, pady=50)
@@ -35,12 +35,16 @@ class QuizInterface:
 
     def get_next_question(self):
         q_text = self.quiz.next_question()
+        self.canvas.config(bg="white")
         self.canvas.itemconfig(self.question_text, text=q_text)
 
     def true_clicked(self):
-        self.quiz.check_answer("True")
-        self.get_next_question()
+        self.give_feed_back(self.quiz.check_answer("True"))
 
     def false_clicked(self):
-        self.quiz.check_answer("False")
-        self.get_next_question()
+        self.give_feed_back(self.quiz.check_answer("False"))
+
+    def give_feed_back(self, is_right):
+        bkg_color = "#5BB780" if is_right else "#FF8086"
+        self.canvas.config(bg=bkg_color)
+        self.window.after(1000, self.get_next_question)
